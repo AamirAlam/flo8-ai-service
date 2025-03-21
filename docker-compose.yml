@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  flask-api:
+    build: .
+    container_name: flask-api
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./app:/app/app
+    networks:
+      - flask-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  flask-network:
+    driver: bridge
