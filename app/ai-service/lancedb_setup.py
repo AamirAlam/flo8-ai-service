@@ -1,5 +1,12 @@
 from pathlib import Path
-import tiktoken
+# Try to import tiktoken, but provide a fallback if it's not available
+try:
+    import tiktoken
+    TIKTOKEN_AVAILABLE = True
+except ImportError:
+    TIKTOKEN_AVAILABLE = False
+    print("Warning: tiktoken package not available. Using simple text chunking instead.")
+
 import lancedb
 from lancedb.embeddings import get_registry
 from lancedb.pydantic import LanceModel,Vector
@@ -20,11 +27,18 @@ def chunk_text(text: str, max_tokens: int = 8192, encoding_name: str = 'cl100k_b
     """
     Chunk text into smaller parts to fit within a maximum token limit.
     """
-    encoding = tiktoken.get_encoding(encoding_name)
-    tokens = encoding.encode(text)
+    if TIKTOKEN_AVAILABLE:
+        encoding = tiktoken.get_encoding(encoding_name)
+        tokens = encoding.encode(text)
 
-    for i in range(0, len(tokens), max_tokens):
-        yield encoding.decode(tokens[i : i + max_tokens])
+        for i in range(0, len(tokens), max_tokens):
+            yield encoding.decode(tokens[i : i + max_tokens])
+    else:
+        # Simple fallback chunking based on character count
+        # Approximate tokens by characters (rough estimate: 4 chars ≈ 1 token)
+        char_limit = max_tokens * 4
+        for i in range(0, len(text), char_limit):
+            yield text[i:i + char_limit]
 
 def create_lancedb_table(db_path: str, table_name: str, overwrite: bool = True):
     """
