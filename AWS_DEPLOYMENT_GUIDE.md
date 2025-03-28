@@ -112,12 +112,23 @@ exit
    ./set_env.sh YOUR_OPENAI_API_KEY
    ```
 
-4. Build and start the Docker containers:
+4. Create necessary directories:
+   ```bash
+   # Create directories for database and knowledge files
+   mkdir -p db knowledge_files
+   ```
+
+5. Build and start the Docker containers:
    ```bash
    docker-compose up -d
    ```
 
-5. Verify the container is running:
+   The Docker container will automatically:
+   - Create necessary directories
+   - Initialize the LanceDB database with sample knowledge
+   - Start the Flask application
+
+6. Verify the container is running:
    ```bash
    docker-compose ps
    ```
@@ -163,7 +174,13 @@ If you prefer to run the application directly on the instance:
    ./set_env.sh YOUR_OPENAI_API_KEY
    ```
 
-5. Run the application:
+5. Initialize the LanceDB database:
+   ```bash
+   # Run the database setup script
+   ./setup_db.sh
+   ```
+
+6. Run the application:
    ```bash
    python3 run.py
    ```
@@ -247,7 +264,13 @@ sudo systemctl start flask-api
 
 4. Check EC2 security groups to ensure port 5001 is open
 
-5. Python 3.13 Compatibility Issues:
+5. **"Table 'knowledge' was not found" Error**:
+   - This error occurs when the LanceDB database hasn't been initialized
+   - If using Docker, make sure the volumes are properly mounted in docker-compose.yml
+   - If using manual deployment, run the `./setup_db.sh` script to create the necessary database and sample knowledge
+   - Make sure the `db` and `knowledge_files` directories exist and are properly populated
+
+6. Python 3.13 Compatibility Issues:
    - The project includes a workaround for tiktoken which isn't compatible with Python 3.13
    - If you encounter other compatibility issues, consider using Python 3.11 or 3.12
 

@@ -14,6 +14,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./db:/app/db
+      - ./knowledge_files:/app/knowledge_files
     networks:
       - flask-network
     healthcheck:
