@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            min-height: 100px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            padding: 8px;
+            width: 300px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>CORS Test for Flask API</h1>
+    
+    <div>
+        <h2>API URL</h2>
+        <input type="text" id="apiUrl" value="http://localhost:5001" placeholder="Enter API URL (e.g., http://localhost:5001)">
+    </div>
+
+    <div>
+        <h2>Test GET Request</h2>
+        <button onclick="testGet()">Test GET /</button>
+        <div id="getResult" class="result">Results will appear here...</div>
+    </div>
+
+    <div>
+        <h2>Test POST Request</h2>
+        <button onclick="testPost()">Test POST /api/ai/query</button>
+        <div id="postResult" class="result">Results will appear here...</div>
+    </div>
+
+    <div>
+        <h2>Test with Preflight (OPTIONS)</h2>
+        <button onclick="testPreflight()">Test with Custom Header</button>
+        <div id="preflightResult" class="result">Results will appear here...</div>
+    </div>
+
+    <script>
+        // Function to display results
+        function displayResult(elementId, success, message, data) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            const statusElement = document.createElement('div');
+            statusElement.className = success ? 'success' : 'error';
+            statusElement.textContent = message;
+            element.appendChild(statusElement);
+            
+            if (data) {
+                const pre = document.createElement('pre');
+                pre.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+                element.appendChild(pre);
+            }
+        }
+
+        // Test GET request
+        async function testGet() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            try {
+                const response = await fetch(`${apiUrl}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                displayResult('getResult', true, 'GET request successful!', data);
+            } catch (error) {
+                displayResult('getResult', false, 'GET request failed (likely CORS issue):', error.message);
+            }
+        }
+
+        // Test POST request
+        async function testPost() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            try {
+                const response = await fetch(`${apiUrl}/api/ai/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: 'What is artificial intelligence?' })
+                });
+                
+                const data = await response.json();
+                displayResult('postResult', true, 'POST request successful!', data);
+            } catch (error) {
+                displayResult('postResult', false, 'POST request failed (likely CORS issue):', error.message);
+            }
+        }
+
+        // Test with preflight (OPTIONS) request
+        async function testPreflight() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            try {
+                const response = await fetch(`${apiUrl}/api/ai/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Custom-Header': 'custom-value',  // This triggers a preflight OPTIONS request
+                        'Authorization': 'Bearer test-token'
+                    },
+                    body: JSON.stringify({ query: 'What is machine learning?' })
+                });
+                
+                const data = await response.json();
+                displayResult('preflightResult', true, 'Request with preflight successful!', data);
+            } catch (error) {
+                displayResult('preflightResult', false, 'Request with preflight failed (likely CORS issue):', error.message);
+            }
+        }
+    </script>
+</body>
+</html>
