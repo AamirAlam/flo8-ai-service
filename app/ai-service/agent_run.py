@@ -5,10 +5,26 @@ import re
 from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
-from lancedb_setup import setup_lancedb,retrieve_similar_docs
+from lancedb_setup import setup_lancedb, retrieve_similar_docs
+from typing import List, Dict, Optional
+from pydantic import BaseModel
 
 # Load environment variables from .env file
 load_dotenv()
+
+class NodeUi(BaseModel):
+    pass  # This will be expanded based on your actual node structure
+
+class Connections(BaseModel):
+    pass  # This will be expanded based on your actual connections structure
+
+class WorkflowData(BaseModel):
+    nodes: List[NodeUi]
+    connections: Connections
+
+class AiResponse(BaseModel):
+    response: str
+    workflowData: object
 
 def setup_knowledge_query_agent():
     """
@@ -83,7 +99,7 @@ def process_query(query, db_path="./db", table_name="knowledge"):
     response = main_agent.run_sync(prompt)
     
     # Parse the response data to extract the JSON
-    response_data = response.data
+    response_data = response.data.response if isinstance(response.data, AiResponse) else response.data
     
     # Extract JSON from markdown code block if present
     json_match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', response_data)
@@ -94,7 +110,10 @@ def process_query(query, db_path="./db", table_name="knowledge"):
         try:
             # Parse the JSON string into a Python dictionary
             workflow_json = json.loads(json_str)
-            return workflow_json
+            return AiResponse(
+                response='Workflow JSON generated successfully',
+                workflowData=workflow_json
+            ).model_dump()
         except json.JSONDecodeError:
             # If JSON parsing fails, return the original response
             return {"error": "Failed to parse JSON from response", "raw_response": response_data}
