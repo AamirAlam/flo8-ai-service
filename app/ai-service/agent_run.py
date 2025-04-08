@@ -6,25 +6,29 @@ from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
 from lancedb_setup import setup_lancedb, retrieve_similar_docs
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from pydantic import BaseModel
 
 # Load environment variables from .env file
 load_dotenv()
 
 class NodeUi(BaseModel):
-    pass  # This will be expanded based on your actual node structure
+    name: str
+    parameters: Dict[str, Any]
+    position: List[int]
+    type: str
+    typeVersion: int
 
 class Connections(BaseModel):
-    pass  # This will be expanded based on your actual connections structure
+    main: Optional[List[List[Dict[str, Any]]]] = None
 
 class WorkflowData(BaseModel):
     nodes: List[NodeUi]
-    connections: Connections
+    connections: Dict[str, Connections]
 
 class AiResponse(BaseModel):
     response: str
-    workflowData: object
+    workflowData: WorkflowData
 
 def setup_knowledge_query_agent():
     """
@@ -49,10 +53,12 @@ def setup_main_agent():
     agent = Agent(
         name='Main Agent',
         model=OpenAIModel('gpt-4o-mini', api_key=openai_api_key),
-        system_prompt="You are an expert in generating valid n8n workflow JSONs based on user requirements; ensure the structure follows n8n's schema, include necessary nodes, connections, and configurations, use appropriate parameters, placeholders for API keys, and format the JSON correctly for direct import into n8n, responding only with the JSON output without explanations.",
+        system_prompt="You are an expert in generating valid n8n workflow JSONs based on user requirements; ensure the structure follows n8n's schema, include necessary nodes, connections, and configurations, use appropriate parameters, placeholders for API keys, and format the JSON correctly for direct import into n8n, responding only with the JSON output without explanations. Include a response message to hint about the result in a response key, this will only be used for information purposes.",
+        result_type=AiResponse
     )
 
     return agent
+
 
 def process_query(query, db_path="./db", table_name="knowledge"):
     """
@@ -97,26 +103,55 @@ def process_query(query, db_path="./db", table_name="knowledge"):
     
     # Get response from main agent
     response = main_agent.run_sync(prompt)
+
+    # print('prompt response ', response.data)
     
-    # Parse the response data to extract the JSON
-    response_data = response.data.response if isinstance(response.data, AiResponse) else response.data
-    
-    # Extract JSON from markdown code block if present
-    json_match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', response_data)
-    
-    if json_match:
-        # Extract the JSON string
-        json_str = json_match.group(1)
-        try:
-            # Parse the JSON string into a Python dictionary
-            workflow_json = json.loads(json_str)
-            return AiResponse(
-                response='Workflow JSON generated successfully',
-                workflowData=workflow_json
-            ).model_dump()
-        except json.JSONDecodeError:
-            # If JSON parsing fails, return the original response
-            return {"error": "Failed to parse JSON from response", "raw_response": response_data}
+    # Check if response.data is an AiResponse object
+    if isinstance(response.data, AiResponse):
+        # Already properly formatted, return as is
+        return response.data.model_dump()
     else:
-        # If no JSON code block is found, return the original response
-        return {"error": "No JSON found in response", "raw_response": response_data}
+        # If response.data is a string or other format, try to extract JSON
+        response_data = response.data
+        
+        # Try to parse as JSON first
+        try:
+            # If it's already valid JSON, parse it
+            if isinstance(response_data, str):
+                # Extract JSON from markdown code block if present
+                json_match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', response_data)
+                
+                if json_match:
+                    json_str = json_match.group(1)
+                    workflow_json = json.loads(json_str)
+                else:
+                    # Try parsing the whole string as JSON
+                    workflow_json = json.loads(response_data)
+                
+                # Check if it has the expected structure
+                if "nodes" in workflow_json and "connections" in workflow_json:
+                    print("workflow_json from first if")
+                    # It appears to be just the workflowData part
+                    return AiResponse(
+                        response="Workflow JSON generated successfully",
+                        workflowData=workflow_json
+                    ).model_dump()
+                elif "workflowData" in workflow_json:
+                    print("workflow_json from second if")
+                    # It already has the right structure
+                    if "response" not in workflow_json:
+                        workflow_json["response"] = "Workflow JSON generated successfully"
+                    return workflow_json
+            print("workflow_json from else")
+            # If we got here, the structure doesn't match expectations
+            return {
+                "response": "Workflow JSON structure doesn't match expected format",
+                "rawOutput": response_data
+            }
+            
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            # If JSON parsing fails, return the original response
+            return {
+                "error": f"Failed to parse response: {str(e)}",
+                "rawOutput": response_data
+            }
