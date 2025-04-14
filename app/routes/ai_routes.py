@@ -74,9 +74,15 @@ def handle_query_v2():
     # Get the query from the request
     data = request.get_json()
     text = data.get('text')
-    credentialData = data.get('credentialData', {})
-    workflowData = data.get('workflowData', {})
-    errorData = data.get('errorData', {})
+    context = data.get('context')
+    credentialData = context.get('credentialData', {})
+    workflowData = context.get('workflowData', {})
+    errorData = context.get('errorData', {})
+
+    print("context", context)
+    print("credentialData", credentialData)
+    print("workflowData", workflowData)
+    print("errorData", errorData)
     
     if not text:
         return jsonify({"error": "Text parameter is required"}), 400

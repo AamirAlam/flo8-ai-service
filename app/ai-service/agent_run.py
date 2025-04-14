@@ -54,8 +54,7 @@ def setup_main_agent():
     agent = Agent(
         name='Main Agent',
         model=OpenAIModel('gpt-4o-mini', api_key=openai_api_key),
-        system_prompt="You are an expert in generating valid n8n workflow JSONs based on user requirements; ensure the structure follows n8n's schema, include necessary nodes, connections, and configurations, use appropriate parameters, placeholders for API keys, and format the JSON correctly for direct import into n8n, responding only with the JSON output without explanations. Include a text message to hint about the result in a text key, this will only be used for information purposes also include a instruction key to provide instructions if needed (import, run, requestcontext, requestData:Telegram). Include a workflowData key to provide the workflow JSON.",
-        result_type=AiResponse
+        system_prompt="You are an expert in generating valid n8n workflow JSONs based on user requirements; ensure the structure follows n8n's schema, include necessary nodes, connections, and configurations, use appropriate parameters, placeholders for API keys, and format the JSON correctly for direct import into n8n, responding only with the JSON output without explanations. Include a text message to hint about the result in a text key, this will only be used for information purposes also include a instruction key to provide instructions command for the n8n   for example, run, import,etc  .Include a workflowData key to provide the workflow JSON.",        result_type=AiResponse
     )
 
     return agent
