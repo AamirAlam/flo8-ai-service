@@ -1,0 +1,56 @@
+# Send a message with a Discord Bot
+
+**[View Template](https://n8n.io/workflows/410-/)**  **Published Date:** 06/17/2020  **Created By:** eem2188  **Categories:** `Communication` `HITL`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "2",
+  "name": "Discord Intro",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        510,
+        330
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "position": [
+        800,
+        330
+      ],
+      "parameters": {
+        "text": "Hello World!",
+        "webhookUri": "https://discordapp.com/api/webhooks/XXX/XXX"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

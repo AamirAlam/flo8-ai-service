@@ -1,0 +1,47 @@
+# Receive updates when an email is bounced or opened
+
+**[View Template](https://n8n.io/workflows/660-/)**  **Published Date:** 09/14/2020  **Created By:** ghagrawal17  **Categories:**   
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "48",
+  "name": "Receive updates when an email is bounced or opened",
+  "nodes": [
+    {
+      "name": "Postmark Trigger",
+      "type": "n8n-nodes-base.postmarkTrigger",
+      "position": [
+        690,
+        260
+      ],
+      "webhookId": "1422ac7a-62ba-4f7c-8e22-4e8ecb4950ce",
+      "parameters": {
+        "events": [
+          "bounce",
+          "open"
+        ],
+        "includeContent": true
+      },
+      "credentials": {
+        "postmarkApi": "postmark"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "Postmark Trigger": {
+      "main": [
+        []
+      ]
+    }
+  }
+}
+```

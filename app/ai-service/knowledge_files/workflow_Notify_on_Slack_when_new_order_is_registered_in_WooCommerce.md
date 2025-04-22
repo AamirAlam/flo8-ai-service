@@ -1,0 +1,145 @@
+# Notify on Slack when new order is registered in WooCommerce
+
+**[View Template](https://n8n.io/workflows/1457-/)**  **Published Date:** 02/17/2022  **Created By:** Jonathan  **Categories:** `Communication` `HITL`  
+
+## Template Description
+
+This workflow uses a WooCommerce trigger that will run when an order has been placed.
+
+If the value of this is over 100 it will post it to a Slack channel.
+
+To use this workflow you will need to set the credentials to use for the WooCommerce and Slack nodes, You will also need to pick a channel to post the message to.
+
+## Template JSON
+
+```
+{
+  "id": 81,
+  "name": "New WooCommerce order to Slack",
+  "nodes": [
+    {
+      "name": "Order Created",
+      "type": "n8n-nodes-base.wooCommerceTrigger",
+      "position": [
+        340,
+        500
+      ],
+      "webhookId": "287b4bf4-67ec-4c97-85d9-c0d3e6f59e6b",
+      "parameters": {
+        "event": "order.created"
+      },
+      "credentials": {
+        "wooCommerceApi": {
+          "id": "48",
+          "name": "WooCommerce account"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Send to Slack",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        780,
+        480
+      ],
+      "parameters": {
+        "text": ":sparkles: There is a new order :sparkles:",
+        "channel": "woo-commerce",
+        "blocksUi": {
+          "blocksValues": []
+        },
+        "attachments": [
+          {
+            "color": "#66FF00",
+            "fields": {
+              "item": [
+                {
+                  "short": true,
+                  "title": "Order ID",
+                  "value": "={{$json[\"id\"]}}"
+                },
+                {
+                  "short": true,
+                  "title": "Status",
+                  "value": "={{$json[\"status\"]}}"
+                },
+                {
+                  "short": true,
+                  "title": "Total",
+                  "value": "={{$json[\"currency_symbol\"]}}{{$json[\"total\"]}}"
+                },
+                {
+                  "short": false,
+                  "title": "Link",
+                  "value": "={{$node[\"Order Created\"].json[\"_links\"][\"self\"][0][\"href\"]}}"
+                }
+              ]
+            },
+            "footer": "=*Ordered:* {{$json[\"date_created\"]}} | *Transaction ID:* {{$json[\"transaction_id\"]}}"
+          }
+        ],
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackApi": {
+          "id": "53",
+          "name": "Slack Access Token"
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Price over 100",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        540,
+        500
+      ],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json[\"total\"]}}",
+              "value2": 100,
+              "operation": "largerEqual"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all"
+  },
+  "connections": {
+    "Order Created": {
+      "main": [
+        [
+          {
+            "node": "Price over 100",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Price over 100": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  }
+}
+```

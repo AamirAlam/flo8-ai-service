@@ -38,7 +38,7 @@ def setup_knowledge_query_agent():
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     agent = Agent(
         name='Knowledge Query Agent',
-        model=OpenAIModel('gpt-4o-mini', api_key=openai_api_key),
+        model=OpenAIModel('gpt-4.1', api_key=openai_api_key),
         deps_type=str,
         result_type=str,
         system_prompt='From the input text string, please generate a query string to pass to the knowledge base.'

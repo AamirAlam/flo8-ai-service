@@ -1,0 +1,208 @@
+# Check To Do on Notion and send message on Slack
+
+**[View Template](https://n8n.io/workflows/1105-/)**  **Published Date:** 05/31/2021  **Created By:** ghagrawal17  **Categories:** `Communication` `HITL` `Productivity`  
+
+## Template Description
+
+This workflow allows you to check the To-Do list on Notion and send a message on Slack.
+
+Prerequisites
+Create a Notion page similar to this page.
+Create credentials for Notion by following the instructions mentioned in the documentation.
+Follow the steps mentioned in the documentation to create credentials for Slack.
+
+Cron node: This node triggers the workflow every day.
+
+Notion node: This node fetches all the tasks from Notion.
+
+IF node: This node checks if the task is assigned to a particular user.
+
+Create a Direct Message: This node will create a direct message channel with the user.
+
+Send a Direct Message: This node will send the to-do lists in the direct message.
+
+NoOp: This node is connected to the false output of the IF node. If the condition is false, no further action will be taken.
+
+## Template JSON
+
+```
+{
+  "id": "331",
+  "name": "Check To Do on Notion and send message on Slack",
+  "nodes": [
+    {
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        470,
+        320
+      ],
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 8
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "NoOp",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1120,
+        420
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Get To Dos",
+      "type": "n8n-nodes-base.notion",
+      "position": [
+        670,
+        320
+      ],
+      "parameters": {
+        "blockId": "bafdscf",
+        "resource": "block",
+        "operation": "getAll",
+        "returnAll": true
+      },
+      "credentials": {
+        "notionApi": ""
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "If task assigned to Harshil?",
+      "type": "n8n-nodes-base.if",
+      "notes": "Check if the task is incomplete",
+      "position": [
+        870,
+        320
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"to_do\"][\"text\"][1][\"mention\"][\"user\"][\"name\"]}}",
+              "value2": "NAME"
+            }
+          ],
+          "boolean": [
+            {
+              "value1": "={{$json[\"to_do\"][\"checked\"]}}"
+            }
+          ]
+        }
+      },
+      "notesInFlow": true,
+      "typeVersion": 1
+    },
+    {
+      "name": "Create a Direct Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        1120,
+        220
+      ],
+      "parameters": {
+        "options": {
+          "users": [
+            "U01JXLAJ6SE"
+          ]
+        },
+        "resource": "channel",
+        "operation": "open"
+      },
+      "credentials": {
+        "slackApi": ""
+      },
+      "executeOnce": false,
+      "typeVersion": 1
+    },
+    {
+      "name": "Send a Direct Message",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        1320,
+        220
+      ],
+      "parameters": {
+        "text": "# TO DO",
+        "channel": "={{$json[\"id\"]}}",
+        "attachments": [
+          {
+            "title": "=\u2611\ufe0f {{$node[\"If task assigned to Harshil?\"].json[\"to_do\"][\"text\"][0][\"text\"][\"content\"]}}"
+          }
+        ],
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "credentials": {
+        "slackApi": ""
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": true,
+  "settings": {},
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "Get To Dos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get To Dos": {
+      "main": [
+        [
+          {
+            "node": "If task assigned to Harshil?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a Direct Message": {
+      "main": [
+        [
+          {
+            "node": "Send a Direct Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If task assigned to Harshil?": {
+      "main": [
+        [
+          {
+            "node": "Create a Direct Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoOp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

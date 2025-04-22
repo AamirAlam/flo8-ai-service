@@ -1,0 +1,82 @@
+# Standup bot (2/4): Read Config
+
+**[View Template](https://n8n.io/workflows/1473-/)**  **Published Date:** 02/18/2022  **Created By:** Jonathan  **Categories:**   
+
+## Template Description
+
+This is the second workflow for the Mattermost Standup Bot. This workflow is called by the 'Standup Bot - Worker' workflow and will read and return the configuration options.
+
+## Template JSON
+
+```
+{
+  "id": 112,
+  "name": "Standup Bot - Read Config",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Read Config File",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "filePath": "/home/node/.n8n/standup-bot-config.json",
+        "dataPropertyName": "config"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Convert to JSON",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "options": {
+          "encoding": "utf8"
+        },
+        "sourceKey": "config"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "Read Config File": {
+      "main": [
+        [
+          {
+            "node": "Convert to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Read Config File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

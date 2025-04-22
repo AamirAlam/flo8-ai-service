@@ -1,0 +1,63 @@
+# Publish a post to a publication on Medium
+
+**[View Template](https://n8n.io/workflows/594-/)**  **Published Date:** 08/07/2020  **Created By:** ghagrawal17  **Categories:** `Marketing`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "7",
+  "name": "Publish post to a publication",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Medium",
+      "type": "n8n-nodes-base.medium",
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "title": "",
+        "content": "",
+        "publication": true,
+        "contentFormat": "",
+        "publicationId": "",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "mediumApi": "medium"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Medium",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

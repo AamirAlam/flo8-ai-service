@@ -1,0 +1,69 @@
+# Create an event in PostHog when a request is made to a webhook URL
+
+**[View Template](https://n8n.io/workflows/968-/)**  **Published Date:** 03/03/2021  **Created By:** ghagrawal17  **Categories:** `Development` `Analytics`  
+
+## Template Description
+
+This workflow automatically creates an event in PostHog when a request is made to a webhook URL.
+
+Prerequisites
+
+A PostHog account and credentials
+
+Nodes
+
+Webhook node triggers the workflow when a URL is accessed.
+PostHog node creates a new event in PostHog.
+
+## Template JSON
+
+```
+{
+  "nodes": [
+    {
+      "name": "PostHog",
+      "type": "n8n-nodes-base.postHog",
+      "position": [
+        640,
+        280
+      ],
+      "parameters": {
+        "eventName": "={{$json[\"query\"][\"event\"]}}",
+        "distinctId": "n8n",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "postHogApi": "PostHog Credentials"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        440,
+        280
+      ],
+      "webhookId": "f6d0071e-3cf9-49fd-8bbd-afdbea6b0c67",
+      "parameters": {
+        "path": "f6d0071e-3cf9-49fd-8bbd-afdbea6b0c67",
+        "options": {}
+      },
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "PostHog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

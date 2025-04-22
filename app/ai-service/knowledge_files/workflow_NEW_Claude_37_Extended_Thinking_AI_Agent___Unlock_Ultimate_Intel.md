@@ -1,0 +1,194 @@
+# 🧠 *NEW* Claude 3.7 Extended Thinking AI Agent 🤖 – Unlock Ultimate Intelligence
+
+**[View Template](https://n8n.io/workflows/3009-/)**  **Published Date:** 02/25/2025  **Created By:** Jonas Busch  **Categories:** `Development` `Core Nodes`  
+
+## Template Description
+
+🧠 NEW Claude 3.7 Extended Thinking AI Agent 🤖 – Unlock Ultimate Intelligence
+
+Supercharge Claude 3.7 with full customization & deeper reasoning!  
+
+Who is this for? 🎯  
+✅ AI Enthusiasts & Researchers: Push Claude’s intelligence to new heights.  
+✅ Professionals & Analysts: Get in-depth, high-quality insights.  
+✅ Developers & Power Users: Unlock settings not available on the official Claude site.  
+
+What makes this different? 🚀  
+Even Claude Pro limits your control—this tool breaks those barriers! Adjust thinking tokens to supercharge extended reasoning, fine-tune every setting, and get smarter, more strategic responses that outperform the default experience.  
+
+How it works 🌟  
+1️⃣ Customize Claude 3.7’s settings (beyond what’s possible on the official site).  
+2️⃣ Increase thinking tokens to drastically improve deep reasoning.  
+3️⃣ Chat with Claude at peak performance for more insightful answers.  
+
+Quick Setup ⚙️ (1-3 min)  
+🔹 Connect the Claude API.  
+🔹 Adjust settings for ultimate AI performance.  
+🔹 Start getting deeper, smarter responses instantly!  
+
+Required API 🔗  
+Claude 3.7 API (Paid)**  
+
+Why use this tool? 💡  
+Unlock full customization** & go beyond Claude’s default limits.  
+Enhance extended thinking** for more powerful reasoning.  
+Optimize response depth, quality & accuracy.**  
+
+👉 Take Claude 3.7 to the next level—start customizing now!
+
+## Template JSON
+
+```
+{
+  "id": "orycXAEeu4i2tiGo",
+  "meta": {
+    "instanceId": "b2c6727f02106e7324192d5dfa251f5dd42759bfd0d7e1602a3ab09f0fcd3b61",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Claude 3.7 Extended Thinking AI Agent",
+  "tags": [
+    {
+      "id": "ZpvdYWekm3yflGGn",
+      "name": "Claude",
+      "createdAt": "2025-02-25T10:07:27.212Z",
+      "updatedAt": "2025-02-25T10:07:27.212Z"
+    },
+    {
+      "id": "j82neTlPTB3GhgSs",
+      "name": "Coding",
+      "createdAt": "2025-02-25T10:08:10.456Z",
+      "updatedAt": "2025-02-25T10:08:10.456Z"
+    },
+    {
+      "id": "jJnzpA8oWOrt6aT8",
+      "name": "Other",
+      "createdAt": "2025-02-25T10:08:11.382Z",
+      "updatedAt": "2025-02-25T10:08:11.382Z"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "5fde0cfb-b41a-479c-8e30-3812a927cba4",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "490c20d2-e7b8-4c95-a380-50d6de9daafa",
+      "parameters": {},
+      "typeVersion": 2.2
+    },
+    {
+      "id": "18406083-696c-4c3e-bcb7-a0ad1242980e",
+      "name": "Form",
+      "type": "n8n-nodes-base.form",
+      "position": [
+        440,
+        0
+      ],
+      "webhookId": "9528c151-bee8-4971-b7c2-92759a724f78",
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "id": "6bf76f4c-ff79-45f7-9315-9a49c73659f7",
+      "name": "Claude Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {},
+      "typeVersion": 4.2
+    },
+    {
+      "id": "03e496cf-fcc6-4e20-9156-a0777c074838",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -460,
+        -20
+      ],
+      "parameters": {
+        "content": ""
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "ea014614-c430-4c61-b67d-2ce2a89c2f60",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        120,
+        -200
+      ],
+      "parameters": {
+        "content": ""
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "ebdf17ac-ffba-4fc9-99d9-279993487201",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -580,
+        -860
+      ],
+      "parameters": {
+        "content": ""
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "22c1a532-a049-482b-b140-9b8be427e5ec",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -460,
+        200
+      ],
+      "parameters": {
+        "content": ""
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "528d6f30-5c15-4b4d-b3c7-9a2bb94904c3",
+  "connections": {
+    "Form": {
+      "main": [
+        []
+      ]
+    },
+    "Claude Message": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Claude Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```
