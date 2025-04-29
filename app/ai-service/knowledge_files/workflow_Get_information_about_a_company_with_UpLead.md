@@ -1,0 +1,58 @@
+# Get information about a company with UpLead
+
+**[View Template](https://n8n.io/workflows/504-/)**  **Published Date:** 07/14/2020  **Created By:** tanaypant  **Categories:** `Sales`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "129",
+  "name": "Get information about a company with UpLead",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Uplead",
+      "type": "n8n-nodes-base.uplead",
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "company": "Apple"
+      },
+      "credentials": {
+        "upleadApi": ""
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Uplead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

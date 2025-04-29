@@ -1,0 +1,121 @@
+# Manage subscribers in ConvertKit
+
+**[View Template](https://n8n.io/workflows/642-/)**  **Published Date:** 09/10/2020  **Created By:** ghagrawal17  **Categories:** `Sales` `Marketing`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "25",
+  "name": "Add subscriber to form, create tag and subscriber to the tag",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        300,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "ConvertKit",
+      "type": "n8n-nodes-base.convertKit",
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "id": 1657198,
+        "email": "",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "convertKitApi": "convertkit"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "ConvertKit1",
+      "type": "n8n-nodes-base.convertKit",
+      "position": [
+        710,
+        300
+      ],
+      "parameters": {
+        "name": "",
+        "resource": "tag"
+      },
+      "credentials": {
+        "convertKitApi": "convertkit"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "ConvertKit2",
+      "type": "n8n-nodes-base.convertKit",
+      "position": [
+        910,
+        300
+      ],
+      "parameters": {
+        "email": "={{$node[\"ConvertKit\"].json[\"subscriber\"][\"email_address\"]}}",
+        "tagId": 1850395,
+        "resource": "tagSubscriber",
+        "operation": "add",
+        "additionalFields": {
+          "fields": {
+            "field": []
+          }
+        }
+      },
+      "credentials": {
+        "convertKitApi": "convertkit"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "ConvertKit": {
+      "main": [
+        [
+          {
+            "node": "ConvertKit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConvertKit1": {
+      "main": [
+        [
+          {
+            "node": "ConvertKit2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "ConvertKit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

@@ -1,12 +1,5 @@
 from pathlib import Path
-# Try to import tiktoken, but provide a fallback if it's not available
-try:
-    import tiktoken
-    TIKTOKEN_AVAILABLE = True
-except ImportError:
-    TIKTOKEN_AVAILABLE = False
-    print("Warning: tiktoken package not available. Using simple text chunking instead.")
-
+import tiktoken
 import lancedb
 from lancedb.embeddings import get_registry
 from lancedb.pydantic import LanceModel,Vector
@@ -27,18 +20,11 @@ def chunk_text(text: str, max_tokens: int = 8192, encoding_name: str = 'cl100k_b
     """
     Chunk text into smaller parts to fit within a maximum token limit.
     """
-    if TIKTOKEN_AVAILABLE:
-        encoding = tiktoken.get_encoding(encoding_name)
-        tokens = encoding.encode(text)
+    encoding = tiktoken.get_encoding(encoding_name)
+    tokens = encoding.encode(text)
 
-        for i in range(0, len(tokens), max_tokens):
-            yield encoding.decode(tokens[i : i + max_tokens])
-    else:
-        # Simple fallback chunking based on character count
-        # Approximate tokens by characters (rough estimate: 4 chars ≈ 1 token)
-        char_limit = max_tokens * 4
-        for i in range(0, len(text), char_limit):
-            yield text[i:i + char_limit]
+    for i in range(0, len(tokens), max_tokens):
+        yield encoding.decode(tokens[i : i + max_tokens])
 
 def create_lancedb_table(db_path: str, table_name: str, overwrite: bool = True):
     """
@@ -62,10 +48,11 @@ def drop_lancedb_table(db_path: str, table_name: str):
     db.drop_table(table_name, ignore_missing=True)
 
 
-def add_documents_to_table(table: LanceTable, knowledge_base_dir: str, max_tokens: int = 8192):
+def add_documents_to_table(table: LanceTable, knowledge_base_dir: str, max_tokens: int = 8192, batch_size: int = 50):
     """
-    Add markdown documents from a local directory to the LanceDB table.
+    Add markdown documents from a local directory to the LanceDB table, batching requests to avoid OpenAI rate limits.
     """
+    import time
     docs = []
     knowledge_base = Path(knowledge_base_dir)
 
@@ -77,9 +64,15 @@ def add_documents_to_table(table: LanceTable, knowledge_base_dir: str, max_token
                 doc_id = f'{md_file.stem}_{i}'
                 docs.append({'id': doc_id, 'text': chunk})
 
-    if docs:
-        table.add(docs)
-        print(f'Added {len(docs)} documents (chunks) to the table.')
+    # Batch docs to avoid exceeding API rate limits
+    total_docs = len(docs)
+    if total_docs:
+        batches = [docs[i:i+batch_size] for i in range(0, total_docs, batch_size)]
+        for idx, batch in enumerate(batches):
+            print(f'Adding batch {idx+1}/{len(batches)} ({len(batch)} docs)')
+            table.add(batch)
+            time.sleep(1)  # short delay between batches to avoid hitting TPM limits
+        print(f'Added {total_docs} documents (chunks) to the table.')
     else:
         print('No documents found or added.')
 

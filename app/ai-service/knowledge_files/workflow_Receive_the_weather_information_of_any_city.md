@@ -1,0 +1,100 @@
+# Receive the weather information of any city
+
+**[View Template](https://n8n.io/workflows/807-/)**  **Published Date:** 12/03/2020  **Created By:** ghagrawal17  **Categories:** `Utility` `Miscellaneous`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "158",
+  "name": "Receive the weather information of any city",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        580,
+        340
+      ],
+      "webhookId": "45690b6a-2b01-472d-8839-5e83a74858e5",
+      "parameters": {
+        "path": "45690b6a-2b01-472d-8839-5e83a74858e5",
+        "options": {},
+        "responseData": "allEntries",
+        "responseMode": "lastNode"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "OpenWeatherMap",
+      "type": "n8n-nodes-base.openWeatherMap",
+      "position": [
+        770,
+        340
+      ],
+      "parameters": {
+        "cityName": "={{$node[\"Webhook\"].json[\"query\"][\"city\"]}}"
+      },
+      "credentials": {
+        "openWeatherMapApi": ""
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        970,
+        340
+      ],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "temp",
+              "value": "={{$node[\"OpenWeatherMap\"].json[\"main\"][\"temp\"]}}"
+            },
+            {
+              "name": "description",
+              "value": "={{$node[\"OpenWeatherMap\"].json[\"weather\"][0][\"description\"]}}"
+            }
+          ]
+        },
+        "options": {},
+        "keepOnlySet": true
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

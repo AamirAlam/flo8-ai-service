@@ -1,0 +1,62 @@
+# Create a new customer in Chargebee
+
+**[View Template](https://n8n.io/workflows/483-/)**  **Published Date:** 07/11/2020  **Created By:** tanaypant  **Categories:** `Finance & Accounting`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "103",
+  "name": "Create a new customer in Chargebee",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Chargebee",
+      "type": "n8n-nodes-base.chargebee",
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "resource": "customer",
+        "properties": {
+          "last_name": "",
+          "first_name": ""
+        }
+      },
+      "credentials": {
+        "chargebeeApi": ""
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Chargebee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

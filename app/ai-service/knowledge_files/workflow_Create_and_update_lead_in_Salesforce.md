@@ -1,0 +1,117 @@
+# Create and update lead in Salesforce
+
+**[View Template](https://n8n.io/workflows/664-/)**  **Published Date:** 09/15/2020  **Created By:** amudhan  **Categories:** `Sales` `Communication`  
+
+## Template Description
+
+Companion workflow for Salesforce node docs
+
+
+
+## Template JSON
+
+```
+{
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        420,
+        260
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Salesforce",
+      "type": "n8n-nodes-base.salesforce",
+      "position": [
+        620,
+        260
+      ],
+      "parameters": {
+        "company": "CompanyInc",
+        "lastname": "DudeOne",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "salesforceOAuth2Api": "salesforce_creds"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Salesforce1",
+      "type": "n8n-nodes-base.salesforce",
+      "position": [
+        810,
+        260
+      ],
+      "parameters": {
+        "leadId": "={{$node[\"Salesforce\"].json[\"id\"]}}",
+        "operation": "update",
+        "updateFields": {
+          "city": "Berlin"
+        }
+      },
+      "credentials": {
+        "salesforceOAuth2Api": "salesforce_creds"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Salesforce2",
+      "type": "n8n-nodes-base.salesforce",
+      "position": [
+        1020,
+        260
+      ],
+      "parameters": {
+        "title": "Deal Won!",
+        "leadId": "={{$node[\"Salesforce\"].json[\"id\"]}}",
+        "options": {},
+        "operation": "addNote"
+      },
+      "credentials": {
+        "salesforceOAuth2Api": "salesforce_creds"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Salesforce": {
+      "main": [
+        [
+          {
+            "node": "Salesforce1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salesforce1": {
+      "main": [
+        [
+          {
+            "node": "Salesforce2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Salesforce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

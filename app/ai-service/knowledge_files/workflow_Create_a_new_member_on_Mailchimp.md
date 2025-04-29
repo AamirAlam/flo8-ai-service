@@ -1,0 +1,69 @@
+# Create a new member on Mailchimp
+
+**[View Template](https://n8n.io/workflows/413-/)**  **Published Date:** 06/18/2020  **Created By:** eem2188  **Categories:** `Communication` `Marketing`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "3",
+  "name": "Mailchimp",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        480,
+        310
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "position": [
+        780,
+        310
+      ],
+      "parameters": {
+        "list": "97542c5cf8",
+        "email": "xxxx@email.com",
+        "status": "subscribed",
+        "options": {},
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "Joe"
+            }
+          ]
+        }
+      },
+      "credentials": {
+        "mailchimpApi": "mailchimpAPI"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

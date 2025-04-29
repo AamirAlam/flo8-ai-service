@@ -1,0 +1,66 @@
+# Trigger a build using the TravisCI node
+
+**[View Template](https://n8n.io/workflows/658-/)**  **Published Date:** 09/14/2020  **Created By:** ghagrawal17  **Categories:** `Development`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "52",
+  "name": "Trigger a build using the TravisCI node",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        510,
+        350
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "TravisCI",
+      "type": "n8n-nodes-base.travisCi",
+      "position": [
+        710,
+        350
+      ],
+      "parameters": {
+        "slug": "",
+        "branch": "",
+        "operation": "trigger",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "travisCiApi": "travisCI"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "TravisCI": {
+      "main": [
+        []
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "TravisCI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

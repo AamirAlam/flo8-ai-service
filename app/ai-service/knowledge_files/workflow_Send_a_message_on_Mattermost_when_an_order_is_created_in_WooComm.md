@@ -1,0 +1,69 @@
+# Send a message on Mattermost when an order is created in WooCommerce
+
+**[View Template](https://n8n.io/workflows/848-/)**  **Published Date:** 12/25/2020  **Created By:** ghagrawal17  **Categories:** `Communication`  
+
+## Template Description
+
+This workflow allows you to send a message on Mattermost when an order is created in WooCommerce.
+
+
+
+## Template JSON
+
+```
+{
+  "id": "188",
+  "name": "Send a message on Mattermost when an order is created in WooCommerce",
+  "nodes": [
+    {
+      "name": "WooCommerce Trigger",
+      "type": "n8n-nodes-base.wooCommerceTrigger",
+      "position": [
+        550,
+        260
+      ],
+      "webhookId": "84960a7c-cb69-4dfb-a5ed-aac12e0efbf8",
+      "parameters": {
+        "event": "order.created"
+      },
+      "credentials": {
+        "wooCommerceApi": "woocommerce"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Mattermost",
+      "type": "n8n-nodes-base.mattermost",
+      "position": [
+        750,
+        260
+      ],
+      "parameters": {
+        "message": "={{$node[\"WooCommerce Trigger\"].json[\"billing\"][\"first_name\"]}} bought {{$node[\"WooCommerce Trigger\"].json[\"line_items\"][0][\"name\"]}}!",
+        "channelId": "pj1p95ebei8g3ro5p84kxxuuio",
+        "attachments": [],
+        "otherOptions": {}
+      },
+      "credentials": {
+        "mattermostApi": "Mattermost Credentials"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "WooCommerce Trigger": {
+      "main": [
+        [
+          {
+            "node": "Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

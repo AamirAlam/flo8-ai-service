@@ -1,0 +1,250 @@
+# Archive Spotify's discover weekly playlist
+
+**[View Template](https://n8n.io/workflows/697-/)**  **Published Date:** 10/02/2020  **Created By:** Trey  **Categories:** `Miscellaneous`  
+
+## Template Description
+
+
+
+This workflow will archive your Spotify Discover Weekly playlist to an archive playlist named "Discover Weekly Archive" which you must create yourself. If you want to change the name of the archive playlist, you can edit value2 in the "Find Archive Playlist" node.
+
+It is configured to run at 8am on Mondays, a conservative value in case you forgot to set your GENERIC_TIMEZONE environment variable (see the docs here).
+
+Special thanks to erin2722 for creating the Spotify node and harshil1712 for help with the workflow logic.
+
+To use this workflow, you'll need to:
+
+Create then select your credentials in each Spotify node
+Create the archive playlist yourself
+
+Optionally, you may choose to:
+Edit the archive playlist name in the "Find Archive Playlist" node
+Adjust the Cron node with an earlier time if you know GENERIC_TIMEZONE is set
+Setup an error workflow like this one to be notified if anything goes wrong
+
+
+
+## Template JSON
+
+```
+{
+  "id": "5",
+  "meta": {
+    "instanceId": "ee00ab315efd316330251cb18aeeede6afbd7b9703f49b7388a8bb655e7a1665"
+  },
+  "name": "Example: Archive Spotify's Discover Weekly playlist",
+  "tags": [],
+  "nodes": [
+    {
+      "id": "00e66ecd-8b01-4b94-8479-789713f99adc",
+      "name": "Get Playlists",
+      "type": "n8n-nodes-base.spotify",
+      "position": [
+        -240,
+        80
+      ],
+      "parameters": {
+        "resource": "playlist",
+        "operation": "getUserPlaylists",
+        "returnAll": true
+      },
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": null,
+          "name": "Trey"
+        }
+      },
+      "executeOnce": false,
+      "typeVersion": 1
+    },
+    {
+      "id": "5b5f648d-3af4-42b9-ba4d-36806c1f9ef3",
+      "name": "Get Tracks",
+      "type": "n8n-nodes-base.spotify",
+      "position": [
+        300,
+        80
+      ],
+      "parameters": {
+        "id": "={{$node[\"Find Weekly Playlist\"].json[\"uri\"]}}",
+        "resource": "playlist",
+        "operation": "getTracks",
+        "returnAll": true
+      },
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": null,
+          "name": "Trey"
+        }
+      },
+      "executeOnce": true,
+      "typeVersion": 1,
+      "alwaysOutputData": false
+    },
+    {
+      "id": "88325eb3-01ae-4cea-b8d0-0e2cc8fc7aba",
+      "name": "Save to Archive",
+      "type": "n8n-nodes-base.spotify",
+      "position": [
+        440,
+        80
+      ],
+      "parameters": {
+        "id": "={{$item(0).$node[\"Find Archive Playlist\"].json[\"uri\"]}}",
+        "trackID": "={{$json[\"track\"][\"uri\"]}}",
+        "resource": "playlist",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": null,
+          "name": "Trey"
+        }
+      },
+      "executeOnce": false,
+      "typeVersion": 1
+    },
+    {
+      "id": "02f221e5-47b9-4e9e-9c68-ca7ddf37564e",
+      "name": "Find Archive Playlist",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -40,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"name\"]}}",
+              "value2": "Discover Weekly Archive"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "603f7161-a141-48ce-97e2-4e5a43bfb4fe",
+      "name": "Find Weekly Playlist",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -40,
+        140
+      ],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"name\"]}}",
+              "value2": "Discover Weekly"
+            }
+          ]
+        }
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "9d5ec356-4a8c-465b-9f0f-a993fd58ef4d",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        160,
+        80
+      ],
+      "parameters": {
+        "mode": "wait"
+      },
+      "typeVersion": 1
+    },
+    {
+      "id": "3a8e7f8f-e332-4aef-b9f8-83755b356a02",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "notes": "8am Mondays",
+      "position": [
+        -400,
+        80
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "notesInFlow": true,
+      "typeVersion": 1.1
+    }
+  ],
+  "active": false,
+  "pinData": {},
+  "settings": {},
+  "versionId": "ce04e934-338b-4f44-87e6-327fad99bd01",
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Get Tracks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tracks": {
+      "main": [
+        [
+          {
+            "node": "Save to Archive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Playlists": {
+      "main": [
+        [
+          {
+            "node": "Find Archive Playlist",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Find Weekly Playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Weekly Playlist": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Find Archive Playlist": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

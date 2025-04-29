@@ -1,0 +1,66 @@
+# Create a coupon on Paddle
+
+**[View Template](https://n8n.io/workflows/659-/)**  **Published Date:** 09/14/2020  **Created By:** ghagrawal17  **Categories:** `Sales`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "54",
+  "name": "Create a coupon on Paddle",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        550,
+        260
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Paddle",
+      "type": "n8n-nodes-base.paddle",
+      "position": [
+        750,
+        260
+      ],
+      "parameters": {
+        "discountAmount": 2,
+        "additionalFields": {
+          "couponCode": "n8n-docs"
+        }
+      },
+      "credentials": {
+        "paddleApi": "paddle"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "Paddle": {
+      "main": [
+        []
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Paddle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

@@ -1,0 +1,191 @@
+# Create, update and get records in Quick Base
+
+**[View Template](https://n8n.io/workflows/805-/)**  **Published Date:** 12/02/2020  **Created By:** ghagrawal17  **Categories:** `Data & Storage`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "156",
+  "name": "Create, update and get records in Quick Base",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Quick Base",
+      "type": "n8n-nodes-base.quickbase",
+      "position": [
+        650,
+        300
+      ],
+      "parameters": {
+        "columns": "name,age",
+        "options": {},
+        "tableId": ""
+      },
+      "credentials": {
+        "quickbaseApi": "Quick Base Credentials"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "age",
+              "value": 8
+            }
+          ],
+          "string": [
+            {
+              "name": "name",
+              "value": "n8n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Set1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        850,
+        300
+      ],
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "age",
+              "value": 10
+            },
+            {
+              "name": "Record ID#",
+              "value": "={{$node[\"Quick Base\"].json[\"Record ID#\"]}}"
+            }
+          ]
+        },
+        "options": {},
+        "keepOnlySet": true
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Quick Base1",
+      "type": "n8n-nodes-base.quickbase",
+      "position": [
+        1050,
+        300
+      ],
+      "parameters": {
+        "columns": "age",
+        "options": {},
+        "tableId": "={{$node[\"Quick Base\"].parameter[\"tableId\"]}}",
+        "operation": "update",
+        "updateKey": "Record ID#"
+      },
+      "credentials": {
+        "quickbaseApi": "Quick Base Credentials"
+      },
+      "typeVersion": 1
+    },
+    {
+      "name": "Quick Base2",
+      "type": "n8n-nodes-base.quickbase",
+      "position": [
+        1250,
+        300
+      ],
+      "parameters": {
+        "options": {},
+        "tableId": "={{$node[\"Quick Base\"].parameter[\"tableId\"]}}",
+        "operation": "getAll"
+      },
+      "credentials": {
+        "quickbaseApi": "Quick Base Credentials"
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Quick Base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set1": {
+      "main": [
+        [
+          {
+            "node": "Quick Base1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quick Base": {
+      "main": [
+        [
+          {
+            "node": "Set1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quick Base1": {
+      "main": [
+        [
+          {
+            "node": "Quick Base2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```

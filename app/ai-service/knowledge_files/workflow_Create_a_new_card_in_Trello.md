@@ -1,0 +1,61 @@
+# Create a new card in Trello
+
+**[View Template](https://n8n.io/workflows/461-/)**  **Published Date:** 07/09/2020  **Created By:** tanaypant  **Categories:** `Productivity`  
+
+## Template Description
+
+
+
+## Template JSON
+
+```
+{
+  "id": "89",
+  "name": "Create a new card in Trello",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {},
+      "typeVersion": 1
+    },
+    {
+      "name": "Trello",
+      "type": "n8n-nodes-base.trello",
+      "position": [
+        450,
+        300
+      ],
+      "parameters": {
+        "name": "Hello",
+        "listId": "",
+        "description": "Here are some details",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "trelloApi": ""
+      },
+      "typeVersion": 1
+    }
+  ],
+  "active": false,
+  "settings": {},
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "Trello",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+```
